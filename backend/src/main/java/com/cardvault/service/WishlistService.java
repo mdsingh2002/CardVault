@@ -75,6 +75,77 @@ public class WishlistService {
         return wishlistRepository.save(wishlist);
     }
 
+    public Wishlist addToWishlistByApiId(UUID userId, AddToWishlistRequest request) {
+        logger.info("Adding card {} to wishlist for user {}", request.getCardApiId(), userId);
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        Card card = cardRepository.findByApiId(request.getCardApiId())
+                .orElseGet(() -> {
+                    PokemonCardDto pokemonCard = pokemonTcgService.getCardById(request.getCardApiId());
+                    return createCardFromPokemonDto(pokemonCard);
+                });
+
+        if (wishlistRepository.existsByUserIdAndCardId(userId, card.getId())) {
+            throw new RuntimeException("Card already in wishlist");
+        }
+
+        Wishlist wishlist = new Wishlist();
+        wishlist.setUser(user);
+        wishlist.setCard(card);
+        wishlist.setPriority(request.getPriority());
+        wishlist.setMaxPrice(request.getMaxPrice());
+        wishlist.setNotes(request.getNotes());
+
+        logger.info("Created new wishlist entry");
+        return wishlistRepository.save(wishlist);
+    }
+
+    private Card createCardFromPokemonDto(PokemonCardDto dto) {
+        Card card = new Card();
+        card.setApiId(dto.getId());
+        card.setName(dto.getName());
+        card.setSetName(dto.getSet() != null ? dto.getSet().getName() : null);
+        card.setSetSeries(dto.getSet() != null ? dto.getSet().getSeries() : null);
+        card.setCardNumber(dto.getNumber());
+        card.setRarity(dto.getRarity());
+        card.setSupertype(dto.getSupertype());
+        card.setSubtypes(dto.getSubtypes() != null ? String.join(",", dto.getSubtypes()) : null);
+        card.setHp(dto.getHp() != null ? Integer.parseInt(dto.getHp()) : null);
+        card.setArtist(dto.getArtist());
+        card.setImageUrl(dto.getImages() != null ? dto.getImages().getLarge() : null);
+        card.setSmallImageUrl(dto.getImages() != null ? dto.getImages().getSmall() : null);
+
+        if (dto.getTcgplayer() != null && dto.getTcgplayer().getPrices() != null) {
+            BigDecimal marketPrice = extractMarketPrice(dto.getTcgplayer().getPrices());
+            card.setMarketPrice(marketPrice);
+        }
+
+        if (dto.getSet() != null && dto.getSet().getReleaseDate() != null) {
+            try {
+                card.setReleaseDate(LocalDate.parse(dto.getSet().getReleaseDate()));
+            } catch (Exception e) {
+                logger.warn("Failed to parse release date: {}", dto.getSet().getReleaseDate());
+            }
+        }
+
+        return cardRepository.save(card);
+    }
+
+    private BigDecimal extractMarketPrice(PokemonCardDto.TcgPlayer.Prices prices) {
+        if (prices.getHolofoil() != null && prices.getHolofoil().getMarket() != null) {
+            return BigDecimal.valueOf(prices.getHolofoil().getMarket());
+        }
+        if (prices.getReverseHolofoil() != null && prices.getReverseHolofoil().getMarket() != null) {
+            return BigDecimal.valueOf(prices.getReverseHolofoil().getMarket());
+        }
+        if (prices.getNormal() != null && prices.getNormal().getMarket() != null) {
+            return BigDecimal.valueOf(prices.getNormal().getMarket());
+        }
+        return BigDecimal.ZERO;
+    }
+
     public Wishlist updateWishlistItem(UUID id, Wishlist wishlistDetails) {
         Wishlist wishlist = wishlistRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Wishlist item not found with id: " + id));
