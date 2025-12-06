@@ -47,9 +47,12 @@ public class PokemonTcgService {
                 builder.queryParam("q", query);
             }
 
+            String url = builder.toUriString();
+            logger.info("Making request to Pokemon TCG API: {}", url);
+
             HttpEntity<String> entity = new HttpEntity<>(getHeaders());
             ResponseEntity<PokemonCardResponse> response = restTemplate.exchange(
-                    builder.toUriString(),
+                    url,
                     HttpMethod.GET,
                     entity,
                     PokemonCardResponse.class
@@ -58,8 +61,8 @@ public class PokemonTcgService {
             logger.info("Successfully fetched cards from Pokemon TCG API");
             return response.getBody();
         } catch (Exception e) {
-            logger.error("Error fetching cards from Pokemon TCG API: {}", e.getMessage());
-            throw new RuntimeException("Failed to fetch cards from Pokemon TCG API", e);
+            logger.error("Error fetching cards from Pokemon TCG API: {}", e.getMessage(), e);
+            throw new RuntimeException("Failed to fetch cards from Pokemon TCG API: " + e.getMessage(), e);
         }
     }
 
@@ -86,6 +89,9 @@ public class PokemonTcgService {
     private static class SingleCardResponse {
         private PokemonCardDto data;
 
+        public SingleCardResponse() {
+        }
+
         public PokemonCardDto getData() {
             return data;
         }
@@ -96,7 +102,10 @@ public class PokemonTcgService {
     }
 
     public PokemonCardResponse searchCardsByName(String name, int page, int pageSize) {
-        String query = "name:\"" + name + "*\"";
+        // Pokemon TCG API uses case-insensitive partial matching
+        // Format: name:cardname (no wildcards needed for partial match)
+        String query = "name:" + name;
+        logger.info("Searching for cards with query: {}", query);
         return searchCards(query, page, pageSize);
     }
 
