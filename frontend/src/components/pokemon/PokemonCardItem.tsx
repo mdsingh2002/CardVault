@@ -20,9 +20,11 @@ export default function PokemonCardItem({ card }: PokemonCardItemProps) {
         quantity: 1,
       });
       alert('Card added to collection!');
-    } catch (error) {
+    } catch (error: any) {
       console.error('Failed to add card to collection:', error);
-      alert('Failed to add card to collection');
+      console.error('Error response:', error.response?.data);
+      const errorMsg = error.response?.data?.message || error.message || 'Failed to add card to collection';
+      alert(errorMsg);
     } finally {
       setLoading(false);
     }
