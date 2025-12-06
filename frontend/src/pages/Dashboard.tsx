@@ -120,7 +120,7 @@ export default function Dashboard() {
               <p className="text-muted-foreground mb-4">
                 Browse through your collection, add new cards, and track their values.
               </p>
-              <Button>View Collection</Button>
+              <Button onClick={() => navigate('/browse')}>Browse Cards</Button>
             </CardContent>
           </Card>
 
