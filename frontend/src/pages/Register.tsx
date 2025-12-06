@@ -24,10 +24,13 @@ export default function Register() {
     setError('');
 
     try {
-      await api.post('/auth/register', formData);
+      const response = await api.post('/auth/register', formData);
+      console.log('Registration successful:', response.data);
       navigate('/login');
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Registration failed. Please try again.');
+      console.error('Registration error:', err);
+      const errorMessage = err.response?.data?.message || err.message || 'Registration failed. Please try again.';
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
