@@ -77,7 +77,7 @@ public class CollectionService {
         userCard.setGradingCompany(request.getGradingCompany());
 
         if (request.getConditionId() != null) {
-            CardCondition condition = cardConditionRepository.findById(UUID.fromString(request.getConditionId()))
+            CardCondition condition = cardConditionRepository.findById(Long.parseLong(request.getConditionId()))
                     .orElse(null);
             userCard.setCondition(condition);
         }
@@ -120,7 +120,7 @@ public class CollectionService {
             userCard.setGradingCompany(request.getGradingCompany());
         }
         if (request.getConditionId() != null) {
-            CardCondition condition = cardConditionRepository.findById(UUID.fromString(request.getConditionId()))
+            CardCondition condition = cardConditionRepository.findById(Long.parseLong(request.getConditionId()))
                     .orElse(null);
             userCard.setCondition(condition);
         }
@@ -148,7 +148,14 @@ public class CollectionService {
         card.setRarity(dto.getRarity());
         card.setSupertype(dto.getSupertype());
         card.setSubtypes(dto.getSubtypes() != null ? String.join(",", dto.getSubtypes()) : null);
-        card.setHp(dto.getHp() != null ? Integer.parseInt(dto.getHp()) : null);
+        if (dto.getHp() != null) {
+            try {
+                card.setHp(Integer.parseInt(dto.getHp()));
+            } catch (NumberFormatException e) {
+                logger.warn("Failed to parse HP value: {}", dto.getHp());
+                card.setHp(null);
+            }
+        }
         card.setArtist(dto.getArtist());
         card.setImageUrl(dto.getImages() != null ? dto.getImages().getLarge() : null);
         card.setSmallImageUrl(dto.getImages() != null ? dto.getImages().getSmall() : null);
