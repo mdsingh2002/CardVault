@@ -55,6 +55,12 @@ export default function Dashboard() {
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           <h1 className="text-2xl font-bold text-primary">CardVault</h1>
           <div className="flex items-center gap-4">
+            <Button variant="ghost" onClick={() => navigate('/browse')}>
+              Browse
+            </Button>
+            <Button variant="ghost" onClick={() => navigate('/collection')}>
+              My Collection
+            </Button>
             <span className="text-sm text-muted-foreground">
               Welcome, {user?.firstName}!
             </span>
