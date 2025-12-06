@@ -1,16 +1,21 @@
 package com.cardvault.service;
 
+import com.cardvault.dto.AddToWishlistRequest;
+import com.cardvault.dto.PokemonCardDto;
 import com.cardvault.model.Card;
 import com.cardvault.model.User;
 import com.cardvault.model.Wishlist;
 import com.cardvault.repository.CardRepository;
 import com.cardvault.repository.UserRepository;
 import com.cardvault.repository.WishlistRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -19,9 +24,14 @@ import java.util.UUID;
 @Transactional
 public class WishlistService {
 
+    private static final Logger logger = LoggerFactory.getLogger(WishlistService.class);
+
     private final WishlistRepository wishlistRepository;
     private final UserRepository userRepository;
     private final CardRepository cardRepository;
+
+    @Autowired
+    private PokemonTcgService pokemonTcgService;
 
     @Autowired
     public WishlistService(WishlistRepository wishlistRepository,
