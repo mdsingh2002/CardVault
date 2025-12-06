@@ -21,6 +21,9 @@ export default function Browse() {
             <Button variant="ghost" onClick={() => navigate('/dashboard')}>
               Dashboard
             </Button>
+            <Button variant="ghost" onClick={() => navigate('/collection')}>
+              My Collection
+            </Button>
             <Button variant="ghost" onClick={handleLogout}>
               Logout
             </Button>
