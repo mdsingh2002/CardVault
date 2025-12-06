@@ -112,7 +112,14 @@ public class WishlistService {
         card.setRarity(dto.getRarity());
         card.setSupertype(dto.getSupertype());
         card.setSubtypes(dto.getSubtypes() != null ? String.join(",", dto.getSubtypes()) : null);
-        card.setHp(dto.getHp() != null ? Integer.parseInt(dto.getHp()) : null);
+        if (dto.getHp() != null) {
+            try {
+                card.setHp(Integer.parseInt(dto.getHp()));
+            } catch (NumberFormatException e) {
+                logger.warn("Failed to parse HP value: {}", dto.getHp());
+                card.setHp(null);
+            }
+        }
         card.setArtist(dto.getArtist());
         card.setImageUrl(dto.getImages() != null ? dto.getImages().getLarge() : null);
         card.setSmallImageUrl(dto.getImages() != null ? dto.getImages().getSmall() : null);
