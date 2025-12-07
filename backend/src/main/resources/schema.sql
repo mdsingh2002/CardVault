@@ -56,7 +56,7 @@ CREATE TABLE IF NOT EXISTS cards (
     rarity VARCHAR(50),
     card_type VARCHAR(50),
     supertype VARCHAR(50),
-    subtypes TEXT[],
+    subtypes TEXT,
     hp INTEGER,
     artist VARCHAR(100),
     image_url TEXT,
