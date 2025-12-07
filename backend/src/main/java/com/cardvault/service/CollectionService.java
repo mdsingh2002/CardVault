@@ -42,6 +42,9 @@ public class CollectionService {
     @Autowired
     private PokemonTcgService pokemonTcgService;
 
+    @Autowired
+    private CollectionValueHistoryService historyService;
+
     @Transactional
     public UserCard addToCollection(UUID userId, AddToCollectionRequest request) {
         logger.info("Adding card {} to collection for user {}", request.getCardApiId(), userId);
@@ -61,7 +64,9 @@ public class CollectionService {
             UserCard userCard = existingUserCard.get();
             userCard.setQuantity(userCard.getQuantity() + request.getQuantity());
             logger.info("Updated quantity for existing card in collection");
-            return userCardRepository.save(userCard);
+            UserCard saved = userCardRepository.save(userCard);
+            historyService.recordSnapshot(userId);
+            return saved;
         }
 
         UserCard userCard = new UserCard();
@@ -83,7 +88,9 @@ public class CollectionService {
         }
 
         logger.info("Created new card in collection");
-        return userCardRepository.save(userCard);
+        UserCard saved = userCardRepository.save(userCard);
+        historyService.recordSnapshot(userId);
+        return saved;
     }
 
     public List<UserCard> getUserCollection(UUID userId) {
@@ -136,6 +143,7 @@ public class CollectionService {
 
         userCardRepository.delete(userCard);
         logger.info("Removed card {} from collection for user {}", userCardId, userId);
+        historyService.recordSnapshot(userId);
     }
 
     private Card createCardFromPokemonDto(PokemonCardDto dto) {

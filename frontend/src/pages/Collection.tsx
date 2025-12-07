@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/Button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
 import collectionApi, { type UserCard } from '@/services/collectionApi';
+import CollectionValueChart from '@/components/collection/CollectionValueChart';
 
 export default function Collection() {
   const navigate = useNavigate();
@@ -135,6 +136,13 @@ export default function Collection() {
         {error && (
           <div className="mb-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
             {error}
+          </div>
+        )}
+
+        {/* Collection Value Chart */}
+        {collection.length > 0 && (
+          <div className="mb-8">
+            <CollectionValueChart />
           </div>
         )}
 
