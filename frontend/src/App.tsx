@@ -1,4 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { Toaster } from 'sonner';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
@@ -9,6 +10,7 @@ import Collection from './pages/Collection';
 function App() {
   return (
     <Router>
+      <Toaster position="bottom-right" richColors />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
