@@ -276,6 +276,7 @@ Frontend will start at `http://localhost:3000`
 - [ ] **Set Completion Tracker** - Track progress on completing sets
 - [ ] **Trade Value Calculator** - Calculate fair trades
 - [ ] **Add More TCGs** - Implement different TCGs
+- [ ] **Add Docker** 
 
 ## 📞 Contact
 
