@@ -1,6 +1,6 @@
 # CardVault
 
-A full-stack web application for managing and tracking your Pokemon card collection. Monitor card values, build wishlists, and analyze your collection's worth over time.
+A full-stack web application for managing and tracking your card collections. Monitor card values, build wishlists, and analyze your collection's worth over time.
 
 ![Java](https://img.shields.io/badge/Java-17-orange?style=flat-square&logo=java)
 ![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.x-green?style=flat-square&logo=spring)
@@ -269,13 +269,13 @@ Frontend will start at `http://localhost:3000`
 ### **Planned Features**
 
 - [ ] **Trading System** - Trade cards with other users
-- [ ] **Deck Builder** - Build and save Pokemon TCG decks
+- [ ] **Deck Builder** - Build and save TCG decks
 - [ ] **Price Alerts** - Get notified when card prices drop
 - [ ] **Bulk Import** - Import collection from CSV
 - [ ] **Social Features** - Follow other collectors, share collections
 - [ ] **Set Completion Tracker** - Track progress on completing sets
 - [ ] **Trade Value Calculator** - Calculate fair trades
-
+- [ ] **Add More TCGs** - Implement different TCGs
 
 ## 📞 Contact
 
@@ -283,7 +283,5 @@ Frontend will start at `http://localhost:3000`
 
 - GitHub: [@mdsingh2002](https://github.com/mdsingh2002)
 - Email: markdavidsingh02@gmail.com
-
-**Project Link:** [https://github.com/yourusername/CardVault](https://github.com/yourusername/CardVault)
 
 ---
