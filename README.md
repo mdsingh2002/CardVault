@@ -1,4 +1,4 @@
-# 🎴 CardVault
+# CardVault
 
 A full-stack web application for managing and tracking your Pokemon card collection. Monitor card values, build wishlists, and analyze your collection's worth over time.
 
@@ -16,7 +16,6 @@ A full-stack web application for managing and tracking your Pokemon card collect
 - [Getting Started](#getting-started)
 - [Future Enhancements](#future-enhancements)
 - [Contributing](#contributing)
-- [License](#license)
 
 ---
 
@@ -277,12 +276,6 @@ Frontend will start at `http://localhost:3000`
 - [ ] **Set Completion Tracker** - Track progress on completing sets
 - [ ] **Trade Value Calculator** - Calculate fair trades
 
-
-## 📝 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
----
 
 ## 📞 Contact
 
