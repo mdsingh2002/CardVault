@@ -293,7 +293,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 **Project Maintainer** - Mark Singh
 
 - GitHub: [@mdsingh2002](https://github.com/mdsingh2002)
-- Email: your.email@example.com
+- Email: markdavidsingh02@gmail.com
 
 **Project Link:** [https://github.com/yourusername/CardVault](https://github.com/yourusername/CardVault)
 
