@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 import { Button } from '@/components/ui/Button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
 import collectionApi, { type UserCard } from '@/services/collectionApi';
@@ -33,17 +34,27 @@ export default function Collection() {
     fetchCollection();
   }, [navigate]);
 
-  const handleRemoveCard = async (id: string) => {
-    if (!confirm('Are you sure you want to remove this card from your collection?')) {
-      return;
-    }
+  const handleRemoveCard = async (id: string, cardName: string) => {
+    const toastId = toast.loading('Removing card from collection...');
 
     try {
       await collectionApi.removeFromCollection(id);
       setCollection(collection.filter(card => card.id !== id));
+
+      toast.success('Card removed from collection', {
+        id: toastId,
+        description: cardName,
+        duration: 3000,
+      });
     } catch (err: any) {
       console.error('Failed to remove card:', err);
-      alert(err.response?.data?.message || 'Failed to remove card');
+      const errorMsg = err.response?.data?.message || 'Failed to remove card';
+
+      toast.error('Failed to remove card', {
+        id: toastId,
+        description: errorMsg,
+        duration: 4000,
+      });
     }
   };
 
@@ -242,7 +253,7 @@ export default function Collection() {
                       size="sm"
                       variant="destructive"
                       className="w-full mt-2"
-                      onClick={() => handleRemoveCard(userCard.id)}
+                      onClick={() => handleRemoveCard(userCard.id, card.name)}
                     >
                       Remove
                     </Button>
