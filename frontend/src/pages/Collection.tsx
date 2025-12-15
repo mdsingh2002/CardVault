@@ -82,6 +82,9 @@ export default function Collection() {
               <Button variant="ghost" onClick={() => navigate('/browse')}>
                 Browse
               </Button>
+              <Button variant="ghost" onClick={() => navigate('/wishlist')}>
+                Wishlist
+              </Button>
             </div>
           </div>
         </nav>
@@ -103,6 +106,9 @@ export default function Collection() {
             </Button>
             <Button variant="ghost" onClick={() => navigate('/browse')}>
               Browse
+            </Button>
+            <Button variant="ghost" onClick={() => navigate('/wishlist')}>
+              Wishlist
             </Button>
             <Button variant="default" onClick={() => navigate('/collection')}>
               My Collection

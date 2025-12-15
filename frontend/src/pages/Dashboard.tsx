@@ -61,6 +61,9 @@ export default function Dashboard() {
             <Button variant="ghost" onClick={() => navigate('/collection')}>
               My Collection
             </Button>
+            <Button variant="ghost" onClick={() => navigate('/wishlist')}>
+              Wishlist
+            </Button>
             <span className="text-sm text-muted-foreground">
               Welcome, {user?.firstName}!
             </span>
@@ -139,7 +142,7 @@ export default function Dashboard() {
               <p className="text-muted-foreground mb-4">
                 Keep track of cards you're looking to add to your collection.
               </p>
-              <Button variant="outline">View Wishlist</Button>
+              <Button variant="outline" onClick={() => navigate('/wishlist')}>View Wishlist</Button>
             </CardContent>
           </Card>
 
