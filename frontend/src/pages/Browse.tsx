@@ -24,6 +24,9 @@ export default function Browse() {
             <Button variant="ghost" onClick={() => navigate('/collection')}>
               My Collection
             </Button>
+            <Button variant="ghost" onClick={() => navigate('/wishlist')}>
+              Wishlist
+            </Button>
             <Button variant="ghost" onClick={handleLogout}>
               Logout
             </Button>
