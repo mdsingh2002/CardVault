@@ -1,5 +1,6 @@
 package com.cardvault.controller;
 
+import com.cardvault.dto.AddToWishlistRequest;
 import com.cardvault.dto.CardResponse;
 import com.cardvault.dto.WishlistRequest;
 import com.cardvault.dto.WishlistResponse;
@@ -32,8 +33,10 @@ public class WishlistController {
         this.userRepository = userRepository;
     }
 
-    @GetMapping("/user/{userId}")
-    public ResponseEntity<List<WishlistResponse>> getUserWishlist(@PathVariable UUID userId) {
+    @GetMapping
+    public ResponseEntity<List<WishlistResponse>> getUserWishlist() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        UUID userId = getUserIdFromAuth(auth);
         List<Wishlist> wishlist = wishlistService.getUserWishlistByPriority(userId);
         List<WishlistResponse> response = wishlist.stream()
                 .map(this::convertToResponse)
@@ -43,14 +46,18 @@ public class WishlistController {
 
     @GetMapping("/{id}")
     public ResponseEntity<WishlistResponse> getWishlistItemById(@PathVariable UUID id) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        UUID userId = getUserIdFromAuth(auth);
         return wishlistService.getWishlistItemById(id)
+                .filter(wishlist -> wishlist.getUser().getId().equals(userId))
                 .map(wishlist -> ResponseEntity.ok(convertToResponse(wishlist)))
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @GetMapping("/user/{userId}/high-priority")
-    public ResponseEntity<List<WishlistResponse>> getHighPriorityItems(@PathVariable UUID userId,
-                                                                       @RequestParam(defaultValue = "3") Integer minPriority) {
+    @GetMapping("/high-priority")
+    public ResponseEntity<List<WishlistResponse>> getHighPriorityItems(@RequestParam(defaultValue = "3") Integer minPriority) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        UUID userId = getUserIdFromAuth(auth);
         List<Wishlist> wishlist = wishlistService.getHighPriorityItems(userId, minPriority);
         List<WishlistResponse> response = wishlist.stream()
                 .map(this::convertToResponse)
@@ -58,52 +65,63 @@ public class WishlistController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/user/{userId}/count")
-    public ResponseEntity<Long> getWishlistCount(@PathVariable UUID userId) {
+    @GetMapping("/count")
+    public ResponseEntity<Long> getWishlistCount() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        UUID userId = getUserIdFromAuth(auth);
         Long count = wishlistService.getWishlistCount(userId);
         return ResponseEntity.ok(count);
     }
 
-    @GetMapping("/user/{userId}/has/{cardId}")
-    public ResponseEntity<Boolean> isInWishlist(@PathVariable UUID userId, @PathVariable UUID cardId) {
+    @GetMapping("/has/{cardId}")
+    public ResponseEntity<Boolean> isInWishlist(@PathVariable UUID cardId) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        UUID userId = getUserIdFromAuth(auth);
         boolean inWishlist = wishlistService.isInWishlist(userId, cardId);
         return ResponseEntity.ok(inWishlist);
     }
 
-    @PostMapping("/user/{userId}")
-    public ResponseEntity<WishlistResponse> addToWishlist(@PathVariable UUID userId,
-                                                          @Valid @RequestBody WishlistRequest request) {
-        Wishlist wishlist = wishlistService.addToWishlist(
-                userId,
-                request.getCardId(),
-                request.getPriority(),
-                request.getMaxPrice(),
-                request.getNotes()
-        );
+    @PostMapping
+    public ResponseEntity<WishlistResponse> addToWishlist(@Valid @RequestBody AddToWishlistRequest request) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        UUID userId = getUserIdFromAuth(auth);
+        Wishlist wishlist = wishlistService.addToWishlistByApiId(userId, request);
         return ResponseEntity.status(HttpStatus.CREATED).body(convertToResponse(wishlist));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<WishlistResponse> updateWishlistItem(@PathVariable UUID id,
                                                                @Valid @RequestBody WishlistRequest request) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        UUID userId = getUserIdFromAuth(auth);
         Wishlist wishlist = new Wishlist();
         wishlist.setPriority(request.getPriority());
         wishlist.setMaxPrice(request.getMaxPrice());
         wishlist.setNotes(request.getNotes());
 
         Wishlist updatedWishlist = wishlistService.updateWishlistItem(id, wishlist);
+        if (!updatedWishlist.getUser().getId().equals(userId)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
         return ResponseEntity.ok(convertToResponse(updatedWishlist));
     }
 
     @PatchMapping("/{id}/priority")
     public ResponseEntity<WishlistResponse> updatePriority(@PathVariable UUID id,
                                                            @RequestParam Integer priority) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        UUID userId = getUserIdFromAuth(auth);
         Wishlist updatedWishlist = wishlistService.updatePriority(id, priority);
+        if (!updatedWishlist.getUser().getId().equals(userId)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
         return ResponseEntity.ok(convertToResponse(updatedWishlist));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> removeFromWishlist(@PathVariable UUID id) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        UUID userId = getUserIdFromAuth(auth);
         wishlistService.removeFromWishlist(id);
         return ResponseEntity.noContent().build();
     }
@@ -141,5 +159,12 @@ public class WishlistController {
         response.setCreatedAt(card.getCreatedAt());
         response.setUpdatedAt(card.getUpdatedAt());
         return response;
+    }
+
+    private UUID getUserIdFromAuth(Authentication auth) {
+        String username = auth.getName();
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found with username: " + username))
+                .getId();
     }
 }
