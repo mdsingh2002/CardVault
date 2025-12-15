@@ -4,11 +4,14 @@ import com.cardvault.dto.CardResponse;
 import com.cardvault.dto.WishlistRequest;
 import com.cardvault.dto.WishlistResponse;
 import com.cardvault.model.Wishlist;
+import com.cardvault.repository.UserRepository;
 import com.cardvault.service.WishlistService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,10 +24,12 @@ import java.util.stream.Collectors;
 public class WishlistController {
 
     private final WishlistService wishlistService;
+    private final UserRepository userRepository;
 
     @Autowired
-    public WishlistController(WishlistService wishlistService) {
+    public WishlistController(WishlistService wishlistService, UserRepository userRepository) {
         this.wishlistService = wishlistService;
+        this.userRepository = userRepository;
     }
 
     @GetMapping("/user/{userId}")
