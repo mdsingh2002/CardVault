@@ -46,11 +46,20 @@ export const wishlistApi = {
     return response.data;
   },
 
-  // Update wishlist item priority
   updatePriority: async (id: string, priority: number): Promise<WishlistItem> => {
-    const response = await api.put<WishlistItem>(`/wishlist/${id}/priority`, null, {
+    const response = await api.patch<WishlistItem>(`/wishlist/${id}/priority`, null, {
       params: { priority }
     });
+    return response.data;
+  },
+
+  updateWishlistItem: async (id: string, request: Partial<AddToWishlistRequest>): Promise<WishlistItem> => {
+    const response = await api.put<WishlistItem>(`/wishlist/${id}`, request);
+    return response.data;
+  },
+
+  getWishlistCount: async (): Promise<number> => {
+    const response = await api.get<number>('/wishlist/count');
     return response.data;
   },
 

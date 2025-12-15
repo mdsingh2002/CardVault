@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { toast } from 'sonner';
 import type { PokemonCard } from '@/types/pokemon';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
@@ -14,17 +15,29 @@ export default function PokemonCardItem({ card }: PokemonCardItemProps) {
 
   const handleAddToCollection = async () => {
     setLoading(true);
+    const toastId = toast.loading('Adding card to collection...');
+
     try {
       await collectionApi.addToCollection({
         cardApiId: card.id,
         quantity: 1,
       });
-      alert('Card added to collection!');
+
+      toast.success('Card added to collection!', {
+        id: toastId,
+        description: `${card.name} - ${card.set.name}`,
+        duration: 3000,
+      });
     } catch (error: any) {
       console.error('Failed to add card to collection:', error);
       console.error('Error response:', error.response?.data);
       const errorMsg = error.response?.data?.message || error.message || 'Failed to add card to collection';
-      alert(errorMsg);
+
+      toast.error('Failed to add card', {
+        id: toastId,
+        description: errorMsg,
+        duration: 4000,
+      });
     } finally {
       setLoading(false);
     }
@@ -32,15 +45,28 @@ export default function PokemonCardItem({ card }: PokemonCardItemProps) {
 
   const handleAddToWishlist = async () => {
     setLoading(true);
+    const toastId = toast.loading('Adding card to wishlist...');
+
     try {
       await wishlistApi.addToWishlist({
         cardApiId: card.id,
         priority: 3,
       });
-      alert('Card added to wishlist!');
-    } catch (error) {
+
+      toast.success('Card added to wishlist!', {
+        id: toastId,
+        description: `${card.name} - ${card.set.name}`,
+        duration: 3000,
+      });
+    } catch (error: any) {
       console.error('Failed to add card to wishlist:', error);
-      alert('Failed to add card to wishlist');
+      const errorMsg = error.response?.data?.message || error.message || 'Failed to add card to wishlist';
+
+      toast.error('Failed to add to wishlist', {
+        id: toastId,
+        description: errorMsg,
+        duration: 4000,
+      });
     } finally {
       setLoading(false);
     }
