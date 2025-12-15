@@ -151,7 +151,7 @@ export default function WishlistCard({ item, onRemove, onUpdate }: WishlistCardP
             )}
           </div>
 
-          {item.card.marketPrice !== undefined && (
+          {item.card.marketPrice !== undefined && item.card.marketPrice !== null && (
             <div className="flex justify-between">
               <span className="text-muted-foreground">Market:</span>
               <span className="font-semibold text-primary">
@@ -160,7 +160,7 @@ export default function WishlistCard({ item, onRemove, onUpdate }: WishlistCardP
             </div>
           )}
 
-          {item.maxPrice !== undefined && (
+          {item.maxPrice !== undefined && item.maxPrice !== null && (
             <div className="flex justify-between">
               <span className="text-muted-foreground">Max Price:</span>
               <span className="font-semibold">
